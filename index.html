@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!-- ==========================================================================
+  Gezondheidsdashboard — de enige HTML-pagina van de app.
+  Zes tabbladen (secties met class "paneel"); app.js schakelt ertussen en
+  vult alle tabellen en grafieken met data uit de API. Vaste volgorde van de
+  voedingswaarden overal: kcal, vet, koolhydraten, eiwit, zout, vezels.
+=========================================================================== -->
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171310">
+<title>Gezondheidsdashboard</title>
+<link rel="stylesheet" href="./stijl.css">
+<link rel="stylesheet" href="./leesmodus.css">
+<!-- PWA: installeerbaar op het beginscherm van de telefoon -->
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" href="./icoon-192.png">
+<link rel="apple-touch-icon" href="./icoon-192.png">
+</head>
+<body>
+
+<header>
+  <nav id="tabs">
+    <button data-paneel="dashboard" class="actief">Dashboard</button>
+  </nav>
+</header>
+
+<main>
+  <section id="paneel-dashboard" class="paneel actief">
+
+    <div class="tegels" id="tegels"></div>
+
+    <div class="filters" id="bereikfilters">
+      <span style="color:var(--gedempt);font-size:13px">Periode:</span>
+      <button data-dagen="7">Laatste 7 dagen</button>
+      <button data-dagen="14">Laatste 14 dagen</button>
+      <button data-dagen="30">Laatste 30 dagen</button>
+      <button data-dagen="90">Laatste 90 dagen</button>
+      <button data-dagen="jaar" class="actief">Start 2026</button>
+    </div>
+
+    <div class="kaart">
+      <h2>Gewicht</h2>
+      <div class="grafiek" id="grafiek-gewicht"></div>
+    </div>
+
+    <div class="kaart">
+      <h2>Calorieën per dag</h2>
+      <div class="legende" id="legende-kcal"></div>
+      <!-- 'zonder-gemlijn': de weekgemiddeldelijn start verborgen; klik op
+           het legende-item "weekgemiddelde" om ze te tonen. -->
+      <div class="grafiek zonder-gemlijn" id="grafiek-kcal"></div>
+    </div>
+
+    <div class="kaart">
+      <h2>Sport per dag</h2>
+      <div class="legende" id="legende-sport"></div>
+      <!-- 'zonder-gemlijn': de weekgemiddeldelijn start verborgen; klik op
+           het legende-item "weekgemiddelde" om ze te tonen. -->
+      <div class="grafiek zonder-gemlijn" id="grafiek-sport"></div>
+    </div>
+
+  </section>
+</main>
+
+<div id="stand-ins" hidden inert><span id="cat-aantal"></span><button id="cat-annuleer"></button><select id="cat-eenheid"></select><input id="cat-id"><input id="cat-naam"><select id="cat-nova"></select><button id="cat-opslaan"></button><div id="cat-tabel"></div><h2 id="cat-titel"></h2><input id="cat-zoek"><input id="dag-datum"><p id="dag-gewicht-huidig"></p><button id="dag-kopieer"></button><span id="dag-label"></span><textarea id="dag-notitie"></textarea><div id="dag-sport"></div><button id="dag-vandaag"></button><div id="dag-voeding"></div><button id="dag-volgende"></button><button id="dag-vorige"></button><form id="form-catalogus"></form><form id="form-geg-gewicht"></form><form id="form-geg-sport"></form><form id="form-gewicht"></form><form id="form-instellingen"></form><form id="form-notitie"></form><form id="form-sport"></form><form id="form-voeding"></form><form id="form-vrij"></form><input id="geg-gewicht-datum"><input id="geg-gewicht-kg"><div id="geg-gewicht-tabel"></div><input id="geg-sport-datum"><input id="geg-sport-duur"><input id="geg-sport-snelheid"><div id="geg-sport-tabel"></div><select id="geg-sport-type"></select><input id="gewicht-kg"><div id="inst-algemeen"></div><div id="inst-kleuren"></div><button id="inst-kleuren-standaard"></button><div id="inst-richtlijnen"></div><input id="sport-duur"><input id="sport-snelheid"><label id="sport-snelheid-label"></label><select id="sport-type"></select><span id="vm-eenheid"></span><input id="vm-hoeveelheid"><input id="vm-uur"><input id="vm-zoek"><datalist id="voedingslijst"></datalist><select id="vrij-eenheid"></select><input id="vrij-hoeveelheid"><input id="vrij-naam"><select id="vrij-nova"></select><input id="vrij-uur"><div id="week-gewicht"></div><button id="week-huidige"></button><span id="week-label"></span><div id="week-tabel"></div><button id="week-volgende"></button><button id="week-vorige"></button></div>
+
+<div class="zweefinfo" id="zweefinfo"></div>
+
+<script src="./leesmodus.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

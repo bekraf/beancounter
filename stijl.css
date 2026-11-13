@@ -1,0 +1,589 @@
+/* ===========================================================================
+   Gezondheidsdashboard — stijl (permanent donker thema)
+   ---------------------------------------------------------------------------
+   Basisschema: warm bijna-zwart als achtergrond, crème (#FFE4A7) als tekst,
+   desktopblauw (#234990) voor de knoppen en roest (#89380F) als hover-accent.
+   Alle kleuren staan hieronder als CSS-variabelen, per rol benoemd. De
+   waarden hier zijn de STANDAARD: op het tabblad Instellingen zijn de meeste
+   rollen (achtergrond, kaarten, knoppen, richtlijngrenzen, NOVA-groepen en
+   sporttypes) per gebruiker in te stellen; app.js zet die keuzes als
+   overrides op dezelfde variabelen.
+   =========================================================================== */
+
+:root {
+  --pagina: #171310;        /* pagina-achtergrond (warm bijna-zwart) */
+  --oppervlak: #221b15;     /* kaarten en grafieken */
+  --inkt: #ffe4a7;          /* hoofdtekst (crème) */
+  --inkt-2: #dcc08a;        /* secundaire tekst */
+  --gedempt: #b3945f;       /* aslabels e.d. */
+  /* haarlijnen en asranden mengen zich vanzelf naar de gekozen kaartkleur */
+  --gridlijn: color-mix(in srgb, var(--oppervlak) 84%, var(--inkt));
+  --aslijn: color-mix(in srgb, var(--oppervlak) 66%, var(--inkt));
+  --rand: rgba(255, 228, 167, 0.14);   /* dunne kaartranden */
+  --accent: #234990;        /* knoppen (desktopblauw) */
+  --roest: #89380f;         /* hover-wash (desktoproest) */
+  --reeks-1: #3987e5;       /* datakleur: opgelicht blauw, leesbaar op donker */
+  --goed: #0ca30c;          /* groen: goed / gezakt gewicht */
+  --slecht: #d03b3b;        /* rood: slecht / gestegen gewicht */
+  /* kleurcodering t.o.v. de richtlijnen */
+  --boven-max: #d03b3b;     /* rood: waarde boven het maximum */
+  --onder-min: #fab219;     /* amber: waarde onder het minimum */
+  /* dezelfde rollen in de grafieken (kcal-staven, BMI-zones): zelfde tinten
+     als de tekstrollen, zodat tekst en grafiek overal gelijk kleuren. Eén
+     kleurkeuze op het Instellingen-tabblad overschrijft ze allebei. */
+  --grafiek-goed: #0ca30c;
+  --grafiek-onder: #fab219;
+  --grafiek-boven: #d03b3b;
+  /* Calorieën-per-dag-staven volgen de vaste sporttinten (green/red/yellow),
+     niet de zachtere richtlijn-/tekstkleuren van het Instellingen-tabblad. */
+  --kcal-goed: #0ca30c;
+  --kcal-onder: #fab219;
+  --kcal-boven: #d03b3b;
+  /* BMI-zones in de gewichtsgrafiek: drie tinten binnen het gezonde bereik
+     (groen rond het midden, geel verder weg, oranje aan de rand) plus het
+     rood erbuiten. Zacht gerenderd op 38% (banden) en 50% (buiten), zodat
+     de banden qua zwaarte aansluiten op het rode buitenvlak (±#722A24). */
+  --bmi-groen: #7cc97e;
+  --bmi-geel: #e6c058;
+  --bmi-oranje: #e8863e;
+  --bmi-buiten: #c23a34;
+  /* De gewichtslijn zelf: gedempt goudbruin, zelfde tint als de
+     grenslijnen/-tekst (i.p.v. het blauwe --reeks-1), met een donkere
+     rand (halo) eronder zodat de lijn loskomt van de kleurzones. */
+  --gewichtslijn: #b3945f;
+  --gewichtslijn-rand: rgba(0, 0, 0, 0.55);
+  /* NOVA-groepen (1 = onbewerkt ... 4 = ultrabewerkt) */
+  --nova1: #0ca30c;
+  --nova2: #fab219;
+  --nova3: #e2854e;
+  --nova4: #d03b3b;
+  /* sporttypes (gestapelde staven + legende in de sportgrafiek) */
+  --sport-lopen: #d03b3b;
+  --sport-wandelen: #8b5cf6;
+  --sport-krachttraining: #0ca30c;
+  --sport-fietsen: #fab219;
+  --sport-zwemmen: #3987e5;
+  --sport-overig: #898781;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--pagina);
+  color: var(--inkt);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  padding: 10px 24px 0;
+  flex-wrap: wrap;
+}
+
+nav { display: flex; gap: 4px; }
+
+nav button {
+  border: none;
+  background: none;
+  font: inherit;
+  color: var(--inkt-2);
+  padding: 8px 14px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+nav button:hover { background: rgba(137, 56, 15, 0.35); }
+
+nav button.actief {
+  color: var(--inkt);
+  font-weight: 600;
+  border-bottom-color: var(--inkt);
+}
+
+main { padding: 16px 24px 48px; max-width: 1180px; margin: 0 auto; }
+
+.paneel { display: none; }
+.paneel.actief { display: block; }
+
+.kaart {
+  background: var(--oppervlak);
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.kaart h2 { font-size: 15px; font-weight: 600; margin: 0 0 2px; }
+.kaart .subtitel { color: var(--gedempt); font-size: 13px; margin: 0 0 12px; }
+
+/* Kaartkop met een actieknop rechts naast de titel (dagboek: Voeding +
+   "Kopieer van gisteren") */
+.kaartkop { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+
+/* Statustegels */
+.tegels { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+
+.tegel {
+  background: var(--oppervlak);
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+  padding: 14px 18px;
+  min-width: 150px;
+  flex: 1;
+}
+
+.tegel .label { color: var(--inkt-2); font-size: 13px; }
+.tegel .waarde { font-size: 28px; font-weight: 600; margin-top: 2px; color: #FFE4A7; }
+
+/* Filterrij */
+.filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filters button {
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--rand);
+  background: var(--oppervlak);
+  color: var(--inkt-2);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.filters button:hover { background: rgba(137, 56, 15, 0.35); }
+
+.filters button.actief {
+  color: var(--inkt);
+  font-weight: 600;
+  border-color: var(--inkt);
+}
+
+/* Grafieken */
+.grafiek { position: relative; }
+.grafiek svg { display: block; width: 100%; height: auto; }
+
+.grafiek .astekst {
+  fill: var(--gedempt);
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* "+" boven een sportstaaf die door het plafond van de y-as breekt; de kleur
+   komt van het segment zelf (fill-attribuut in de SVG). Past net in de
+   bovenmarge van 12px. */
+.grafiek .sportplus {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.grafiek .gridlijn { stroke: var(--gridlijn); stroke-width: 1; }
+.grafiek .aslijn { stroke: var(--aslijn); stroke-width: 1; }
+.grafiek .doellijn { stroke: var(--gedempt); stroke-width: 1; stroke-dasharray: 4 3; }
+/* 9px i.p.v. 11px: "max 2.600" moet in de rechtermarge (±50px) passen. */
+.grafiek .doeltekst { fill: var(--inkt-2); font-size: 9px; }
+.grafiek .kruisdraad { stroke: var(--aslijn); stroke-width: 1; }
+/* Gekoppelde grafieken: de dag die in een ándere grafiek wordt aangewezen.
+   In de gewichtsgrafiek een gestreepte verticale lijn — gestreept, zodat je
+   ze niet verwart met de eigen kruisdraad van deze grafiek, en crème zodat
+   ze leesbaar blijft over de BMI-zones. In de staafgrafieken een zachte
+   kolom achter de staaf van die dag, zodat ook een lege dag te zien is. */
+.grafiek .koppellijn {
+  stroke: var(--inkt-2);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.75;
+}
+.grafiek .koppelband { fill: var(--inkt); opacity: 0.12; }
+/* BMI-grenslijnen (onder-/overgewicht) in de gewichtsgrafiek: gedempt
+   goudbruin, los van --slecht. */
+.grafiek .grenslijn { stroke: #b3945f; stroke-width: 1; }
+.grafiek .grenstekst { fill: #b3945f; font-size: 11px; }
+
+.zweefinfo {
+  position: absolute;
+  pointer-events: none;
+  background: var(--oppervlak);
+  border: 1px solid var(--rand);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  padding: 8px 12px;
+  font-size: 13px;
+  display: none;
+  white-space: nowrap;
+  z-index: 10;
+  color: var(--inkt);
+}
+
+.zweefinfo .zw-waarde { font-weight: 600; font-size: 15px; }
+.zweefinfo .zw-label { color: var(--inkt-2); font-size: 12px; }
+/* Gekleurde regels: gewichtsverschil (groen eraf, rood erbij) en het
+   kcal-gemiddelde t.o.v. de richtlijn (groen binnen, amber onder, rood boven). */
+.zweefinfo .zw-goed { color: var(--goed); }
+.zweefinfo .zw-slecht { color: var(--slecht); }
+.zweefinfo .zw-onder { color: var(--onder-min); }
+.zweefinfo .zw-boven { color: var(--boven-max); }
+
+/* Dagnotitie in het zweefvenster van de kcal-grafiek: cursief en gedempt,
+   en — anders dan de rest van het venster — met regelafbreking zodat een
+   lange notitie niet één ellenlange regel wordt. */
+.zweefinfo .zw-notitie {
+  color: var(--inkt-2);
+  font-style: italic;
+  font-size: 12px;
+  max-width: 280px;
+  white-space: normal;
+  margin-top: 3px;
+}
+
+/* Weegschaalfoto('s) in het zweefvenster van de gewichtsgrafiek: naast
+   elkaar, vaste hoogte zodat het venster niet verspringt tijdens het laden. */
+.zweefinfo .zw-foto { display: flex; gap: 6px; margin-top: 6px; }
+.zweefinfo .zw-foto img { height: 160px; border-radius: 6px; display: block; }
+
+/* Tabellen */
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+
+th {
+  text-align: left;
+  color: var(--inkt-2);
+  font-weight: 600;
+  font-size: 12px;
+  border-bottom: 1px solid var(--aslijn);
+  padding: 6px 10px 6px 0;
+  white-space: nowrap;
+}
+
+td {
+  border-bottom: 1px solid var(--gridlijn);
+  padding: 6px 10px 6px 0;
+  vertical-align: top;
+}
+
+td.getal, th.getal { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Klikbare rijen (weekoverzicht -> dagboek): handje + roest-wash bij hover */
+tr.klikbaar { cursor: pointer; }
+tr.klikbaar:hover td { background: rgba(137, 56, 15, 0.3); }
+
+/* Klikbaar-bewerkbare waarden (cellen in dagboek/gegevens, de gewichtmeting
+   in het dagboek): bewerken door erop te klikken */
+.klik-bewerk { cursor: pointer; }
+.klik-bewerk:hover { color: var(--inkt); text-decoration: underline dotted; }
+/* "Incl."-schakelaar naast de huidige dag in het weekoverzicht (easter egg):
+   gedempt zolang vandaag niet meetelt, crème zodra hij aan staat. */
+.incl-schakel { color: var(--gedempt); cursor: pointer; user-select: none; }
+.incl-schakel:hover { text-decoration: underline dotted; }
+.incl-schakel.actief { color: var(--inkt); }
+tr.totaalrij td { font-weight: 600; border-top: 1px solid var(--aslijn); }
+tr.doelrij td { color: var(--gedempt); font-size: 12px; border-bottom: none; }
+td.gedempt { color: var(--gedempt); }
+
+/* Waarden getoetst aan de richtlijnen (dagboek-totaal, weekoverzicht en
+   legende): rood boven max, amber onder min, groen netjes binnen bereik —
+   alle drie in hetzelfde lettertype en gewicht, alleen de kleur verschilt.
+   In het dagboek staat er ook een pijltje (↑/↓) in de tekst, zodat het
+   verschil daar ook zonder kleur te zien is. */
+.boven { color: var(--boven-max); font-weight: 600; }
+.onder { color: var(--onder-min); font-weight: 600; }
+.binnen { color: var(--goed); font-weight: 600; }
+
+/* NOVA-kleuren voor voedingsnamen en percentages */
+.nova1 { color: var(--nova1); }
+.nova2 { color: var(--nova2); }
+.nova3 { color: var(--nova3); }
+.nova4 { color: var(--nova4); }
+
+/* Legende bij een grafiek met meerdere reeksen: gekleurd blokje + naam */
+.legende { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.legende .sleutel { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--inkt-2); }
+.legende .vlak { width: 12px; height: 12px; border-radius: 3px; }
+
+/* Klikbaar legende-item (een kleurcategorie, een sporttype of de
+   weekgemiddeldelijn aan/uit): gedimd zodra die reeks verborgen is. Bij de
+   gemiddeldelijn krijgt de grafiekhouder dan de klasse 'zonder-gemlijn'; de
+   staven worden bij het hertekenen gewoon weggelaten. */
+.legende .sleutel.klikbaar { cursor: pointer; user-select: none; }
+.legende .sleutel.uit { opacity: 0.45; }
+.zonder-gemlijn .gemlijn { display: none; }
+
+/* Formulieren */
+form.regel {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+form.regel label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--inkt-2);
+}
+
+input, select, textarea {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 8px;
+  border: 1px solid var(--aslijn);
+  border-radius: 8px;
+  background: var(--pagina);
+  color: var(--inkt);
+  color-scheme: dark;   /* donkere datumkiezer/spinners in de browser */
+}
+
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--reeks-1); outline-offset: 0; }
+input:disabled, select:disabled { opacity: 0.55; }
+
+/* Dagnotitie: tekstvak over de volle breedte, opslaan-knop eronder */
+#dag-notitie { width: 100%; resize: vertical; }
+.notitie-onder { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.notitie-onder .melding { margin-top: 0; }
+
+input[type="number"] { width: 90px; }
+input[type="date"] { width: 150px; }
+
+/* ISO-datumvelden (zie isoDatumveld in app.js): tekstveld in yyyy-mm-dd met
+   een kalenderknopje; de echte datumkiezer ligt onzichtbaar over het knopje
+   zodat de native kalender daar opengaat. */
+.datumgroep { display: inline-flex; gap: 6px; align-items: center; }
+.datumtekst { width: 110px; }
+.kalenderwrap { position: relative; display: inline-flex; }
+.kalenderknop {
+  font: inherit;
+  font-size: 14px;
+  background: var(--oppervlak);
+  border: 1px solid var(--rand);
+  border-radius: 8px;
+  padding: 5px 8px;
+  cursor: pointer;
+  color: var(--inkt-2);
+}
+.kalenderknop:hover { background: rgba(137, 56, 15, 0.35); }
+.kalenderkiezer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  padding: 0;
+}
+
+button.primair {
+  font: inherit;
+  font-size: 14px;
+  background: var(--accent);
+  color: var(--inkt);
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  cursor: pointer;
+}
+
+button.primair:hover { filter: brightness(1.2); }
+
+button.klein {
+  font: inherit;
+  font-size: 12px;
+  background: none;
+  border: 1px solid var(--rand);
+  border-radius: 6px;
+  color: var(--inkt-2);
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+button.klein:hover { border-color: var(--slecht); color: var(--slecht); }
+
+/* De dupliceerknop is geen destructieve actie: accentkleur i.p.v. rood. */
+button.klein.kopieer:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Actieknopjes naast elkaar in een tabelcel (dagboek: dupliceer + verwijder) */
+td.acties { white-space: nowrap; }
+td.acties button + button { margin-left: 6px; }
+
+.dagkop {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.dagkop button {
+  font: inherit;
+  border: 1px solid var(--rand);
+  background: var(--oppervlak);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  color: var(--inkt-2);
+}
+
+.dagkop button:hover { background: rgba(137, 56, 15, 0.35); }
+
+.dagkop .weeklabel { font-weight: 600; }
+
+/* Gewichtsverloop onder de weektabel: kg als hoofdgetal (groen gezakt /
+   rood gestegen), het pond-equivalent klein en gedempt erachter. */
+.week-gewicht { margin-top: 12px; font-size: 15px; }
+.week-gewicht .label { color: var(--gedempt); }
+.week-gewicht .waarde { font-weight: 600; }
+.week-gewicht .waarde.goed { color: var(--goed); }
+.week-gewicht .waarde.slecht { color: var(--slecht); }
+.week-gewicht .pond { color: var(--gedempt); font-size: 12px; }
+
+.melding { color: var(--slecht); font-size: 13px; min-height: 18px; margin-top: 6px; }
+.melding.ok { color: var(--goed); }
+
+/* 'Ongedaan maken'-melding: schuift kort omhoog na het verwijderen van een
+   rij, met een herstelknop; verdwijnt vanzelf. */
+.ongedaan {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, 80px);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  background: var(--oppervlak);
+  border: 1px solid var(--rand);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  padding: 10px 16px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s, opacity 0.2s;
+  z-index: 20;
+  white-space: nowrap;
+}
+.ongedaan.zichtbaar { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.ongedaan button {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: var(--reeks-1);
+  cursor: pointer;
+  padding: 0;
+}
+.ongedaan button:hover { text-decoration: underline; }
+
+/* Uitklaprij in de catalogus met de loggeschiedenis van een item */
+tr.historiekrij td {
+  background: rgba(137, 56, 15, 0.12);
+  font-size: 13px;
+  padding: 8px 10px;
+}
+tr.historiekrij .gedempt { color: var(--gedempt); margin-top: 3px; }
+
+/* Exportlinks als knoppen (Gegevens-tabblad) */
+.knoppenrij { display: flex; gap: 10px; flex-wrap: wrap; }
+a.knop {
+  display: inline-block;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid var(--rand);
+  background: var(--oppervlak);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--inkt-2);
+  text-decoration: none;
+}
+a.knop:hover { background: rgba(137, 56, 15, 0.35); color: var(--inkt); }
+
+.kolommen { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .kolommen { grid-template-columns: 1fr; } }
+
+/* Instellingen-tabblad: label + invoerveld + uitleg per rij */
+.inst-rij {
+  display: grid;
+  grid-template-columns: 220px 110px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--gridlijn);
+}
+
+.inst-rij label { font-size: 14px; color: var(--inkt-2); }
+.inst-rij input { width: 100px; }
+.inst-rij .hint { color: var(--gedempt); font-size: 12px; }
+
+/* Kleurkiezers op het Instellingen-tabblad */
+.inst-rij input[type="color"] {
+  width: 52px;
+  height: 30px;
+  padding: 2px 3px;
+  cursor: pointer;
+}
+
+#inst-richtlijnen input { width: 90px; }
+
+.verborgen { display: none !important; }
+
+/* ===========================================================================
+   Smartphone-indeling — alles hieronder geldt alleen voor smalle schermen;
+   de desktopweergave blijft exact zoals ze is.
+   =========================================================================== */
+@media (max-width: 700px) {
+  /* Tabbladbalk: één regel die horizontaal meescrolt in plaats van
+     meerdere regels vol knoppen. */
+  header { padding: 6px 12px 0; }
+  nav {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button { flex: 0 0 auto; white-space: nowrap; padding: 10px 10px; }
+
+  /* Smallere marges: op een telefoon telt elke pixel breedte. */
+  main { padding: 12px 10px 40px; }
+  .kaart { padding: 12px; }
+
+  /* Statustegels: twee per rij, iets compacter. */
+  .tegels { gap: 10px; }
+  .tegel { min-width: calc(50% - 5px); padding: 12px 14px; }
+  .tegel .waarde { font-size: 22px; }
+
+  /* Brede tabellen (weekoverzicht, catalogus, gegevens, dagboek) scrollen
+     horizontaal binnen hun kaart in plaats van de hele pagina op te rekken. */
+  #dag-voeding, #dag-sport, #week-tabel,
+  #geg-gewicht-tabel, #geg-sport-tabel, #cat-tabel {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Datums (2026-07-10) nooit over twee regels breken; de tabel scrolt
+     toch al horizontaal. */
+  td.gedempt { white-space: nowrap; }
+
+  /* iOS zoomt automatisch in op velden met tekst kleiner dan 16px;
+     voorkom dat door de invoervelden op 16px te zetten. */
+  input, select { font-size: 16px; }
+
+  /* Instellingen: label, veld en uitleg onder elkaar in plaats van in
+     drie kolommen. */
+  .inst-rij { grid-template-columns: 1fr; gap: 3px; padding: 8px 0; }
+}
