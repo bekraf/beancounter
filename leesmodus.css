@@ -1,0 +1,19 @@
+/* ===========================================================================
+   Publieke weergave: aanvullingen op stijl.css
+   ---------------------------------------------------------------------------
+   De andere tabbladen zitten niet eens in de publieke pagina (bouw_publiek.py
+   knipt ze eruit); hier staan alleen nog twee kleine correcties.
+   =========================================================================== */
+
+/* Stand-ins voor elementen uit de weggeknipte tabbladen (zie stand_ins in
+   bouw_publiek.py): leeg, en nooit zichtbaar — ook niet als een regel in
+   stijl.css het 'hidden'-attribuut zou overschrijven. */
+#stand-ins {
+  display: none !important;
+}
+
+/* Thuis opent een klik op een kcal-staaf het dagboek (handje als cursor);
+   hier doet die klik niets, dus ook geen handje. */
+#grafiek-kcal rect[cursor="pointer"] {
+  cursor: default;
+}
